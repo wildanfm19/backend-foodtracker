@@ -1,0 +1,17 @@
+services:
+  foodtracker:
+    build: .
+    image: "wildanfm/foodtracker:v1"
+    container_name: foodtracker_ms
+    ports:
+      - "8080:8080"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - wildanfm
+
+networks:
+  wildanfm:
+    driver: "bridge"
