@@ -32,4 +32,8 @@ public interface MealService {
     UserMealsDTO getCurrentLoggedInUserMeals();
 
     MealResponse getMealsByUserId(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder, Long userId);
+
+    MealDTO createMealTesting(MealDTO mealDTO, String mealType);
+
+//    MealResponse getMealTodayAndType(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder, String mealType);
 }

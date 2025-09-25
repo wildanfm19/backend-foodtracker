@@ -31,7 +31,6 @@ public class Meal  extends  BaseEntity{
 
     private LocalTime time;
 
-    private  String imageUrl;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

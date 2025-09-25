@@ -16,9 +16,23 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class MealController {
 
     private final MealService mealService;
+
+
+    //DUMMY ADDMEAL
+    @PostMapping("/add/{mealType}/test")
+    public ResponseEntity<ResponseDTO> createMealTesting(@RequestBody MealDTO mealDTO , @PathVariable String mealType) {
+        MealDTO newMeal =  mealService.createMealTesting(mealDTO ,  mealType);
+        return ResponseEntity.ok(ResponseDTO.builder()
+                .statusCode(MealConstant.HTTP_CREATED_201)
+                .statusMessage(MealConstant.MEAL_CREATED_SUCCESS)
+                .data(newMeal)
+                .build());
+    }
+
 
     @PostMapping("/add/{mealType}")
     public ResponseEntity<ResponseDTO> createMeal(@RequestBody MealDTO mealDTO , @PathVariable String mealType) {
@@ -44,13 +58,13 @@ public class MealController {
                 .build());
     }
 
-    @GetMapping("/meal/date")
+    @GetMapping("/meal/date/{date}")
     public ResponseEntity<ResponseDTO> getMealsByDate(
             @RequestParam(name = "pageNumber", defaultValue = AppConstant.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = AppConstant.PAGE_SIZE, required = false) Integer pageSize,
             @RequestParam(name = "sortBy", defaultValue = AppConstant.SORT_CATEGORIES_BY, required = false) String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = AppConstant.SORT_DIR, required = false) String sortOrder ,
-            @RequestParam(name = "date" , required = false ) @DateTimeFormat(pattern = "yyyy-MM-dd")LocalDate date){
+            @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd")LocalDate date){
 
         if(date == null){
             date = AppConstant.DATE;
@@ -74,7 +88,7 @@ public class MealController {
     }
 
     @GetMapping("/meal/type/{mealType}")
-    public ResponseEntity<ResponseDTO> getMealsByType(
+    public ResponseEntity<ResponseDTO> getTodaysMealByType(
             @RequestParam(name = "pageNumber", defaultValue = AppConstant.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = AppConstant.PAGE_SIZE, required = false) Integer pageSize,
             @RequestParam(name = "sortBy", defaultValue = AppConstant.SORT_CATEGORIES_BY, required = false) String sortBy,

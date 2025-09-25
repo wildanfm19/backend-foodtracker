@@ -26,6 +26,4 @@ public class MealDTO {
 
     private String description;
 
-    private  String imageUrl;
-
 }

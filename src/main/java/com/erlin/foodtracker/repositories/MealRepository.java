@@ -17,7 +17,9 @@ import java.util.List;
 @Repository
 public interface MealRepository extends JpaRepository<Meal, Long> {
 
-    Page<Meal> findByDate(LocalDate date , Pageable pageable);
+    Page<Meal> findByDate( LocalDate date , Pageable pageable);
+
+    Page<Meal> findByUserAndDate(User user , LocalDate date , Pageable pageable);
 
     Page<Meal> findByMealTypeAndDate(MealType mealType , LocalDate date , Pageable pageable);
 
@@ -28,5 +30,8 @@ public interface MealRepository extends JpaRepository<Meal, Long> {
 
     Page<Meal> findByUserUserId(Long userId , Pageable pageable);
 
+    Page<Meal> findByUserAndMealTypeAndDate(User user, MealType mealType, LocalDate date, Pageable pageable);
+
     Long user(User user);
+
 }

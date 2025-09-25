@@ -14,10 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -42,7 +39,6 @@ public class MealServiceImpl implements MealService{
 
         User user = authUtils.loggedInUser();
         meal.setUser(user);
-        meal.setImageUrl("dummyUrl");
         meal.setDate(LocalDate.now());
         meal.setTime(LocalTime.now());
 
@@ -91,8 +87,10 @@ public class MealServiceImpl implements MealService{
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
 
+        User currentUser = authUtils.loggedInUser();
+
         Pageable pageDetails = PageRequest.of(pageNumber , pageSize , sortByAndOrder);;
-        Page<Meal> pageMeal = mealRepository.findByDate(date, pageDetails);
+        Page<Meal> pageMeal = mealRepository.findByUserAndDate(currentUser,date, pageDetails);
 
         List<Meal> meals = pageMeal.getContent();
         List<MealDTO> mealDTOS = meals.stream()
@@ -123,15 +121,19 @@ public class MealServiceImpl implements MealService{
         return modelMapper.map(meal , MealDTO.class);
     }
 
+
+    //ini
     @Override
     public MealResponse getMealsByTypeAndDate(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder, String mealType, LocalDate date) {
         Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
 
+        User currentUser = authUtils.loggedInUser();
+
         MealType type = MealType.valueOf(mealType.toUpperCase());
         Pageable pageDetails = PageRequest.of(pageNumber , pageSize , sortByAndOrder);;
-        Page<Meal> pageMeal = mealRepository.findByMealTypeAndDate(type, date, pageDetails);
+        Page<Meal> pageMeal = mealRepository.findByUserAndMealTypeAndDate(currentUser, type , date , pageDetails);
 
         List<Meal> meals = pageMeal.getContent();
         List<MealDTO> mealDTOS = meals.stream()
@@ -209,10 +211,6 @@ public class MealServiceImpl implements MealService{
 
         updatedMeal.setFood(mealDTO.getFood());
         }
-        if (mealDTO.getImageUrl() != null && !mealDTO.getImageUrl().isEmpty()){
-
-        updatedMeal.setImageUrl(mealDTO.getImageUrl());
-        }
 
         Meal savedUpdatedMeal = modelMapper.map(updatedMeal, Meal.class);
         mealRepository.save(savedUpdatedMeal);
@@ -285,5 +283,57 @@ public class MealServiceImpl implements MealService{
                 .lastPage(pageMeals.isLast())
                 .build();
     }
+
+    @Override
+    public MealDTO createMealTesting(MealDTO mealDTO, String mealType) {
+        MealType type = MealType.valueOf(mealType.toUpperCase());
+
+        mealDTO.setMealType(type);
+
+        Meal meal = modelMapper.map(mealDTO , Meal.class);
+
+        User user = authUtils.loggedInUser();
+        meal.setUser(user);
+
+
+
+
+        Meal savedMeal = mealRepository.save(meal);
+
+        user.getMeals().add(savedMeal);
+
+        return modelMapper.map(savedMeal , MealDTO.class);
+    }
+
+
+//    @Override
+//    public MealResponse getMealTodayAndType(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder, String mealType) {
+//        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
+//                ? Sort.by(sortBy).ascending()
+//                : Sort.by(sortBy).descending();
+//
+//        Pageable pageDetails = PageRequest.of(pageNumber,pageSize , sortByAndOrder);
+//
+//        Page<Meal> pageMeals = mealRepository.findByUserUserId(userId, pageDetails);
+//
+//        List<Meal> meals = pageMeals.getContent();
+//
+//        List<MealDTO> mealDTOS = meals.stream()
+//                .map(meal -> modelMapper.map(meal, MealDTO.class))
+//                .toList();
+//
+//        if(mealDTOS.isEmpty()){
+//            throw new ApiException("There is no meals in the data!!");
+//        }
+//
+//        return MealResponse.builder()
+//                .content(mealDTOS)
+//                .pageNumber(pageMeals.getNumber())
+//                .pageSize(pageMeals.getSize())
+//                .totalElements(pageMeals.getTotalElements())
+//                .totalPages(pageMeals.getTotalPages())
+//                .lastPage(pageMeals.isLast())
+//                .build();
+//    }
 
 }
