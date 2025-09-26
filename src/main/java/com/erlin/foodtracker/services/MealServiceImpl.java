@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -38,9 +39,10 @@ public class MealServiceImpl implements MealService{
         Meal meal = modelMapper.map(mealDTO , Meal.class);
 
         User user = authUtils.loggedInUser();
+        ZoneId jakartaZone = ZoneId.of("Asia/Jakarta");
         meal.setUser(user);
-        meal.setDate(LocalDate.now());
-        meal.setTime(LocalTime.now());
+        meal.setDate(LocalDate.now(jakartaZone));
+        meal.setTime(LocalTime.now(jakartaZone));
 
 
 
