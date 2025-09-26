@@ -30,7 +30,7 @@ public class SecurityConfiguration {
                 )
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-                    corsConfig.setAllowedOrigins(java.util.List.of("http://localhost:4200"));
+                    corsConfig.setAllowedOrigins(java.util.List.of("http://localhost:4200","https://dailybytes-blue.vercel.app"));
                     corsConfig.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     corsConfig.setAllowedHeaders(java.util.List.of("*"));
                     corsConfig.setExposedHeaders(java.util.List.of("*"));
